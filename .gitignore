@@ -1,5 +1,6 @@
-/creds
-/data
+/creds/*
+/creds/gmail/*
+/data/*
 .idea*
 /src/__pycache*
 
