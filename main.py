@@ -37,7 +37,7 @@ if __name__ == "__main__":
         print("Success")
 
         send_email(
-            recipient=recipients_dict["recipient"],
+            recipients_dict= recipients_dict,
             attachments=[f"./data/{sample_file_name}"],
             credentials_file = credentials_file,
             success = True,
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     else:
 
         send_email(
-            recipient=recipients_dict["maintainer"],
+            recipient_dict=recipients_dict,
             cc = recipients_dict["recipient"],
             attachments=None,
             credentials_file = credentials_file,

@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 def send_email(
-        recipient,
+        recipients_dict,
         attachments,
         credentials_file,
         success,
@@ -16,21 +16,21 @@ def send_email(
 
     if success == True:
         subject_email = f'Air quality {date_year}'
-        text_email = f'Air quality for date {date_year_full}'
+        text_email = f'Air quality for date {date_year_full} \n \n Code link: {recipients_dict["github_link"]} \n Google drive link: {recipients_dict["gdrive_link"]}'
     else:
         subject_email = "FAILED to get the data"
         text_email = f'Failed to obtain air quality for date {date_year_full}'
 
 
     ezgmail.init(credentialsFile=credentials_file)
-    ezgmail.send(recipient, subject_email, text_email, attachments, cc = cc)
+    ezgmail.send(recipients_dict["recipient"], subject_email, text_email, attachments, cc = cc)
 
     return()
 
 if __name__ == "__main__":
 
     send_email(
-        recipient='jbrybak@gmail.com',
+        recipient=recipients_dict["recipient"],
         attachments=["../../paper.pdf"],
         credentials_file= "../../credentials.json"
     )
