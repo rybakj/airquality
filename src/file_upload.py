@@ -5,6 +5,12 @@ import json
 
 
 def load_json_file(filename):
+    '''
+    Load json file from the specified path/filename
+
+    :param filename: path to the file
+    :return: loaded data (in dictionary)
+    '''
     if os.path.exists(filename):
         f = open(filename)
         data = json.load(f)
@@ -14,6 +20,16 @@ def load_json_file(filename):
 
 
 def get_refresh_token(secrets_dict):
+    '''
+    Given a secrets file (dict), obtained a refreshed token for Google API to
+    enable data download without manual authentication.
+
+    Inputs:
+    - secrets_dict: dictionary containing 'client_id', 'client_secret' and 'refresh_token' as keys.
+
+    Outputs:
+    - refreshed token (string)
+    '''
     rrr = requests.post(
         "https://www.googleapis.com/oauth2/v4/token",
         data={
@@ -37,6 +53,16 @@ def upload_file(token_refresh,
                 file_name,
                 file_source
                 ):
+    '''
+    Using a given token, upload a file_source file to Goodgle drive, naming it "file_name",
+    inside a folder "parents"
+
+    :param token_refresh: token for Google drive API
+    :param parents: (list) or None - folder inside which to save the file
+    :param file_name: how to call the saved file (string)
+    :param file_source: path + name if the file to upload
+    :return: status code of the upload request (<300 = success, (300, 399) = redirect, >=400 = error)
+    '''
     headers = {"Authorization": "Bearer " + token_refresh}
     para = {
         "name": file_name,
@@ -58,6 +84,14 @@ def upload_file(token_refresh,
 
 
 def extract_secrets(token_file, client_secrets_file):
+    '''
+    From specified files, extract secrets needed to authenticate Google drive API
+    (and to obtain a refreshed token)
+
+    :param token_file: file path (json file)
+    :param client_secrets_file: file path (json file)
+    :return: dictionary with keys 'client_id', 'client_secret', 'refresh_token'
+    '''
 
     token_data = load_json_file(token_file)
     csecrets_data = load_json_file(client_secrets_file)
@@ -75,10 +109,23 @@ def gdrive_upload(
         token_file, secrets_file,
         parents=None
     ):
+    '''
+    Upload a specified file to Google Drive
 
+    :param file_source: path + name of a file
+    :param file_name: name of the file to upload
+    :param token_file: link to token file (json)
+    :param secrets_file: link to cecrets file (json)
+    :param parents: list of parent folders (for GDrive)
+    :return:
+    '''
+
+    # Get credentials/secrets in dictionary
     secrets_dict = extract_secrets(token_file, secrets_file)
+    # refresh token
     token_refresh = get_refresh_token(secrets_dict)
 
+    # upload a given file to Gdrive
     request_result = upload_file(token_refresh, parents = parents,
                 file_name=file_name, file_source=file_source)
 
